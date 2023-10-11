@@ -1,9 +1,8 @@
-from flask import Flask, render_template, url_for
-from os import environ
-from flask import session
+from flask import Flask, render_template, url_for, flash, redirect
+from forms import RegistrationForm, LoginForm
 app = Flask(__name__)
 
-app.secret_key = environ.get('SECRET_KEY')  # or set it to a strong random value
+app.config['SECRET_KEY'] = 'f1ee99c26312b0d9372e20484cc991c4'
 
 # dummy data for testing
 news_data = [
@@ -18,14 +17,25 @@ news_data = [
 user_profile = {"username": "john_doe", "email": "john@example.com"}  # Dummy user profile data
 
 # Route for the Sign Up page
-@app.route('/signup')
+@app.route('/signup', methods=['GET', 'POST'])
 def signup():
-    return render_template('signup.html')  # Render the HTML template for Sign Up
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        flash(f'Account created for {form.username.data}!', 'success')
+        return redirect(url_for('newsfeed'))
+    return render_template('signup.html', title='Register', form=form)  
 
 # Route for the Login page
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template('login.html', news_data=news_data)
+    form = LoginForm()
+    if form.validate_on_submit():
+        if form.email.data == 'admin@blog.com' and form.password.data == 'password':
+            flash('You have been logged in!', 'success')
+            return redirect(url_for('newsfeed'))
+        else:
+            flash('Login Unsuccessful. Please check username and password', 'danger')
+    return render_template('login.html', title='Login', form=form)
 
 # Route for the News Feed page
 @app.route('/')
