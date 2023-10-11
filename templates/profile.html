@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="user-profile">
+    <h1>User Profile</h1>
+    <div class="user-profile">
+        {% for user in user_profile %}
+        <!-- Display user profile information -->
+        <p>Username: {{ user.username }}</p>
+        <p>Email: {{ user.email }}</p>
+        <!-- Include other user-related information -->
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
