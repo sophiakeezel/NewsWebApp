@@ -3,16 +3,6 @@ from app import app
 from app.forms import RegistrationForm, LoginForm
 from app.models import User, Post
 
-# dummy data for testing
-news_data = [
-    {"title": "News 1", "time": "2023-10-05", "likes": 10, "dislikes": 2, "content": "news1"},
-    {"title": "News 2", "time": "2023-10-04", "likes": 8, "dislikes": 1, "content": "news2"},
-    {"title": "News 3", "time": "2023-10-04", "likes": 11, "dislikes": 3, "content": "news3"},
-    {"title": "News 4", "time": "2023-10-04", "likes": 3, "dislikes": 1, "content": "news4"},
-    {"title": "News 5", "time": "2023-10-04", "likes": 6, "dislikes": 2, "content": "news5"},
-    {"title": "News 6", "time": "2023-10-04", "likes": 9, "dislikes": 0, "content": "news6"}    
-]
-
 user_profile = {"username": "john_doe", "email": "john@example.com"}  # Dummy user profile data
 
 # Route for the Sign Up page
@@ -40,7 +30,13 @@ def login():
 @app.route('/')
 @app.route('/newsfeed')
 def newsfeed():
-    return render_template('newsfeed.html', news_data=news_data)
+    # Fetch news items from the database and sort them by time and likes/dislikes
+    news_items = (
+        Post.query.order_by(Post.time.desc(), Post.likes.desc(), Post.dislikes)
+        .paginate(page=1, per_page=10, error_out=False)
+        .items
+    )
+    return render_template('newsfeed.html', news_items=news_items)
 
 # Route for the Profile page
 @app.route('/profile')

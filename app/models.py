@@ -7,7 +7,6 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
     password = db.Column(db.String(60), nullable=False)
-    likes = db.relationship('Post', backref='likes', lazy=True)
 
     def __repr__(self):
         return f"User('{self.username}, {self.email}, {self.image_file}')"
@@ -18,7 +17,8 @@ class Post(db.Model):
     title = db.Column(db.String(100), nullable=False)
     time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     content = db.Column(db.Text, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    likes = db.Column(db.Integer, default=0) 
+    dislikes = db.Column(db.Integer, default=0)  # Add a field for dislikes
 
     def __repr__(self):
         return f"Post('{self.title}, {self.time}')"
