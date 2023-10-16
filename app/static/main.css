@@ -9,7 +9,7 @@ body {
   }
   
   .bg-steel {
-    background-color: #6c254e;
+    background-color: #671f34;
   }
   
   .site-header .navbar-nav .nav-link {
@@ -78,3 +78,24 @@ body {
   .account-heading {
     font-size: 2.5rem;
   }
+
+  .btn-like {
+    background-color: #b9933a; /* Green color for like button */
+    color: white;
+    border: none;
+}
+
+.btn-dislike {
+    background-color: #790c04; /* Red color for dislike button */
+    color: white;
+    border: none;
+}
+
+/* Hover effects for the buttons */
+.btn-like:hover {
+    background-color: #5e4a1b; /* Slightly darker green on hover */
+}
+
+.btn-dislike:hover {
+    background-color: #560600; /* Slightly darker red on hover */
+}

@@ -3,12 +3,13 @@
 <div class="user-profile">
     <h1>User Profile</h1>
     <div class="user-profile">
-        {% for user in user_profile %}
-        <!-- Display user profile information -->
-        <p>Username: {{ user.username }}</p>
-        <p>Email: {{ user.email }}</p>
-        <!-- Include other user-related information -->
-        {% endfor %}
+        {% if 'profile' in session %}
+        <h3>{{ session['profile']['name'] }}</h3>
+        <p>{{ session['profile']['email'] }}</p>
+        <img src="{{ session['profile']['picture'] }}" alt="{{ session['profile']['name'] }}" />
+        {% else %}
+        <p>You must be logged in to view this content.</p>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

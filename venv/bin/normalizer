@@ -1,4 +1,4 @@
-#!/Users/sophiakeezel/Flask_News/COP4521_SDK20/venv/bin/python3
+#!/Users/sophiakeezel/Flask_News/COP4521_SDK20/venv/bin/python3.11
 # -*- coding: utf-8 -*-
 import re
 import sys
