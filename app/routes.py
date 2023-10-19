@@ -30,7 +30,6 @@ def login():
 
 # Route for the News Feed page
 @app.route('/')
-@app.route('/newsfeed')
 def newsfeed():
     # Fetch news items from the database and sort them by time and likes/dislikes
     news_items = (
@@ -51,7 +50,7 @@ def admin():
     return render_template('admin.html')
 
 # route for newsfeed in JSON format
-@app.route('/newsfeeed', methods=['GET'])  # Note the typo in the route, I kept it as is.
+@app.route('/newsfeed', methods=['GET'])  # Note the typo in the route, I kept it as is.
 def api_newsfeed():
     # Fetch news items from the database and sort them by time and likes/dislikes
     news_items = Post.query.order_by(Post.time.desc(), Post.likes.desc(), Post.dislikes).limit(10).all()
