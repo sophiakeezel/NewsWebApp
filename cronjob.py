@@ -18,7 +18,17 @@ def store_news_in_db():
         # Check if the news item is already in the DB
         exists = Post.query.filter_by(title=news_item['title']).first()
         if not exists:
-            post = Post(title=news_item['title'], time=news_time, content=news_item.get('url', ''))
+            post = Post(
+                title=news_item['title'], 
+                time=news_time, 
+                content=news_item.get('url', ''),
+                by=news_item.get('by', ''),
+                descendants=news_item.get('descendants', 0),
+                kids=','.join(map(str, news_item.get('kids', []))),
+                score=news_item.get('score', 0),
+                type=news_item.get('type', ''),
+                url=news_item.get('url', '')
+            )
             db.session.add(post)
 
     db.session.commit()

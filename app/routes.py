@@ -56,14 +56,20 @@ def api_newsfeed():
     news_items = Post.query.order_by(Post.time.desc(), Post.likes.desc(), Post.dislikes).limit(10).all()
     
     # Convert the news items to a JSON response
-    data = [{
-        'id': item.id,
-        'title': item.title,
-        'time': item.time.strftime('%Y-%m-%d %H:%M:%S'),
-        'content': item.content,
-        'likes': item.likes,
-        'dislikes': item.dislikes
-    } for item in news_items]
+    data = {
+        "news_items": [{
+            'by': item.by,
+            'descendants': item.descendants,
+            'id': item.id,
+            'kids': list(map(int, item.kids.split(','))) if item.kids else [],
+            'score': item.score,
+            'text': item.content,
+            'time': int(item.time.timestamp()),
+            'title': item.title,
+            'type': item.type,
+            'url': item.url
+        } for item in news_items]
+    }
     
     return jsonify(data)
 

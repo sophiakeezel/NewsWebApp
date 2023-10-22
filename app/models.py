@@ -18,7 +18,13 @@ class Post(db.Model):
     time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     content = db.Column(db.Text, nullable=False)
     likes = db.Column(db.Integer, default=0) 
-    dislikes = db.Column(db.Integer, default=0)  # Add a field for dislikes
+    dislikes = db.Column(db.Integer, default=0)  
+    by = db.Column(db.String(100), nullable=True)
+    descendants = db.Column(db.Integer, default=0)
+    kids = db.Column(db.String(500), nullable=True)  # Store as comma-separated string or use a related table
+    score = db.Column(db.Integer, default=0)
+    type = db.Column(db.String(50), nullable=True)
+    url = db.Column(db.Text, nullable=True)
 
     def __repr__(self):
         return f"Post('{self.title}, {self.time}')"
