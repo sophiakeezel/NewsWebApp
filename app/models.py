@@ -3,15 +3,14 @@ from app import db
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    is_admin = db.Column(db.Boolean, default=False) # user has administrative privelidges
+    auth0_id = db.Column(db.String(256), unique=True, nullable=True) 
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
-    password = db.Column(db.String(60), nullable=False)
 
     def __repr__(self):
-        return f"User('{self.username}, {self.email}, {self.image_file}')"
+        return f"User('{self.username}, {self.email}')"
     
-
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
@@ -28,3 +27,20 @@ class Post(db.Model):
 
     def __repr__(self):
         return f"Post('{self.title}, {self.time}')"
+    
+class UserPostAction(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+    post = db.relationship('Post', backref='post_actions')  # Add this line
+    action = db.Column(db.String(10), nullable=False)  # 'like' or 'dislike'
+
+    def __repr__(self):
+        return f"UserPostAction('{self.user_id}', '{self.post_id}', '{self.action}')"
+    
+class Comment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+

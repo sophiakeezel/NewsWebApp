@@ -1,9 +1,36 @@
 {% extends "layout.html" %}
-
 {% block content %}
 <div class="container">
     <h1>Admin Panel</h1>
-    <!-- Include admin-specific functionalities and data -->
     <p>Welcome, Admin! You can manage news items and users here.</p>
+    <div class="news-items">
+        {% for post_id, details in news_items.items() %}
+        <article class="media content-section">
+            <div class="media-body">
+              <div class="article-metadata">
+                <small class="text-muted">{{ details.post.time.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+              </div>
+              <h2><a class="article-title" href="#">{{ details.post.title }}</a></h2>
+              <p class="article-content">{{ details.post.content }}</p>
+              <span>Likes: {{ details.post.likes }}</span>
+              <span>Dislikes: {{ details.post.dislikes }}</span>
+
+              <!-- User Actions -->
+              <div>User Actions:</div>
+              <ul>
+                  {% for username, action in details.actions %}
+                      <li>{{ username }} - {{ action }}</li>
+                  {% endfor %}
+              </ul>
+
+              <!-- Delete Button -->
+              <form action="{{ url_for('delete_post', post_id=details.post.id) }}" method="POST">
+                  <button type="submit" class="btn btn-danger delete-button">Delete</button>
+              </form>
+            </div>
+          </article>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}
+

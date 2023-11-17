@@ -6,14 +6,13 @@
         <article class="media content-section">
             <div class="media-body">
               <div class="article-metadata">
-                <a class="mr-2" href="#">{{ news_item.title  }}</a>
                 <small class="text-muted">{{ news_item.time.strftime('%Y-%m-%d %H:%M:%S') }}</small>
               </div>
               <h2><a class="article-title" href="#">{{ news_item.title }}</a></h2>
               <p class="article-content">{{ news_item.content }}</p>
               <!-- Add Like and Dislike buttons -->
-              <a href="{{ url_for('like', post_id=news_item.id) }}" class="btn btn-sm btn-like">Like</a>
-              <a href="{{ url_for('dislike', post_id=news_item.id) }}" class="btn btn-sm btn-dislike">Dislike</a>
+              <a href="{{ url_for('like', post_id=news_item.id) }}" class="btn btn-sm {{ 'btn-primary' if news_item.user_action == 'like' else 'btn-like' }}">Like</a>
+              <a href="{{ url_for('dislike', post_id=news_item.id) }}" class="btn btn-sm {{ 'btn-primary' if news_item.user_action == 'dislike' else 'btn-dislike' }}">Dislike</a>
               <span>Likes: {{ news_item.likes }}</span>
               <span>Dislikes: {{ news_item.dislikes }}</span>
             </div>

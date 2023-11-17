@@ -1,53 +1,144 @@
-from flask import render_template, url_for, flash, redirect
-from app import app
-from app import db
-from app.forms import RegistrationForm, LoginForm
-from app.models import User, Post
+from flask import render_template, url_for, session, redirect, request
+from app import app, db, oauth, env
+from app.models import User, Post, UserPostAction, Comment
+from urllib.parse import urlencode, quote_plus
 from flask import jsonify
 
-user_profile = {"username": "john_doe", "email": "john@example.com"}  # Dummy user profile data
+# Route for the callback page
+@app.route("/callback", methods=["GET", "POST"])
+def callback():
+    try:
+        # Exchange the authorization code for an access token
+        token = oauth.auth0.authorize_access_token()
+        # Get the user's profile information
+        userinfo_endpoint = f"https://{env.get('AUTH0_DOMAIN')}/userinfo"
+        resp = oauth.auth0.get(userinfo_endpoint)
+        userinfo = resp.json()
 
-# Route for the Sign Up page
-@app.route('/signup', methods=['GET', 'POST'])
-def signup():
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        flash(f'Account created for {form.username.data}!', 'success')
-        return redirect(url_for('newsfeed'))
-    return render_template('signup.html', title='Register', form=form)  
+        # Store the user information in flask session
+        session["jwt_payload"] = userinfo
+        session["profile"] = {
+            "user_id": userinfo["sub"],
+            "name": userinfo["name"],
+            "picture": userinfo["picture"],
+            "email": userinfo.get("email")
+        }
+
+        # Get or create user in the database
+        user = User.query.filter_by(auth0_id=userinfo["sub"]).first()
+        if not user:
+            # Create a new user object
+            new_user = User(
+                auth0_id=userinfo["sub"],
+                username=userinfo["name"],  
+                email=userinfo["email"]
+            )
+            db.session.add(new_user)
+            db.session.commit()
+        return redirect('/news')
+    except Exception as e:
+        print(e)
+        return redirect('/news')
 
 # Route for the Login page
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        if form.email.data == 'admin@blog.com' and form.password.data == 'password':
-            flash('You have been logged in!', 'success')
-            return redirect(url_for('newsfeed'))
-        else:
-            flash('Login Unsuccessful. Please check username and password', 'danger')
-    return render_template('login.html', title='Login', form=form)
+    return oauth.auth0.authorize_redirect(
+        redirect_uri=url_for("callback", _external=True)
+    )
+
+@app.route('/admin')
+def admin():
+    user_id = session.get('profile').get('user_id')
+    user = User.query.filter_by(auth0_id=user_id).first()
+    if not user or not user.is_admin:  
+        return "Access Denied", 403
+    # Fetch all news items and user actions on them
+    news_items = Post.query.all()
+
+    # Prepare a dictionary to store user actions for each news item
+    news_items_with_user_actions = {}
+    for item in news_items:
+        actions = db.session.query(User.username, UserPostAction.action).join(UserPostAction, User.id == UserPostAction.user_id).filter(UserPostAction.post_id == item.id).all()
+        news_items_with_user_actions[item.id] = {
+            'post': item,
+            'actions': actions
+        }
+    
+    
+    return render_template('admin.html', news_items=news_items_with_user_actions)
+
+# logout route for auth0
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(
+        "https://" + env.get("AUTH0_DOMAIN")
+        + "/v2/logout?"
+        + urlencode(
+            {
+                "returnTo": url_for("home", _external=True),
+                "client_id": env.get("AUTH0_CLIENT_ID"),
+            },
+            quote_via=quote_plus,
+        )
+    )
+
+# Updated the home route to make a direct check on the session for 'profile'
+@app.route("/")
+def home():
+    if 'profile' not in session:
+        # If the user is not logged in, redirect them to the login page
+        return redirect(url_for('login'))
+    return redirect(url_for('newsfeed'))  # Redirect to the 'newsfeed' route
 
 # Route for the News Feed page
-@app.route('/')
+@app.route('/news')
 def newsfeed():
+    comments = (Comment.query
+                .join(User, User.id == Comment.user_id)
+                .add_columns(User.email, User.username, Comment.text, Comment.timestamp)
+                .order_by(Comment.timestamp.desc())
+                .limit(10)
+                .all())
+    user_id = session.get('profile', {}).get('user_id')
     # Fetch news items from the database and sort them by time and likes/dislikes
     news_items = (
         Post.query.order_by(Post.time.desc(), Post.likes.desc(), Post.dislikes)
         .paginate(page=1, per_page=10, error_out=False)
         .items
     )
-    return render_template('newsfeed.html', news_items=news_items)
+
+    # Fetch user's actions on these posts
+    user_actions = UserPostAction.query.filter_by(user_id=user_id).all()
+    user_actions_map = {action.post_id: action.action for action in user_actions}
+
+    # Add user-specific like/dislike information to each news item
+    for item in news_items:
+        item.user_action = user_actions_map.get(item.id, None)
+
+    is_admin = False
+    user_id = session.get('profile', {}).get('user_id')
+    if user_id:
+        user = User.query.filter_by(auth0_id=user_id).first()
+        if user and user.is_admin:
+            is_admin = True
+
+    return render_template('newsfeed.html', news_items=news_items, comments=comments, is_admin=is_admin)
 
 # Route for the Profile page
 @app.route('/profile')
 def profile():
-    return render_template('profile.html', user_profile=user_profile)
-
-# Route for the Admin page
-@app.route('/admin')
-def admin():
-    return render_template('admin.html')
+    user_id = session.get('profile').get('user_id')
+    user_info = session.get('profile', None)
+    liked_posts = UserPostAction.query.filter_by(user_id=user_id, action='like').all()
+    is_admin = False
+    user_id = session.get('profile', {}).get('user_id')
+    if user_id:
+        user = User.query.filter_by(auth0_id=user_id).first()
+        if user and user.is_admin:
+            is_admin = True
+    return render_template('profile.html', user_profile=user_info, liked_posts=liked_posts, is_admin=is_admin)
 
 # route for newsfeed in JSON format
 @app.route('/newsfeed', methods=['GET'])  # Note the typo in the route, I kept it as is.
@@ -73,18 +164,85 @@ def api_newsfeed():
     
     return jsonify(data)
 
-# logic to like a news post
 @app.route('/like/<int:post_id>')
 def like(post_id):
-    post = Post.query.get_or_404(post_id)
-    post.likes += 1
+    user_id = session.get('profile').get('user_id')
+    action = UserPostAction.query.filter_by(user_id=user_id, post_id=post_id).first()
+
+    if action:
+        if action.action == 'like':
+            # User already liked, so undo the like
+            db.session.delete(action)
+            Post.query.get(post_id).likes -= 1
+        else:
+            # User had disliked, now likes
+            action.action = 'like'
+            Post.query.get(post_id).likes += 1
+            Post.query.get(post_id).dislikes -= 1
+    else:
+        # New like
+        new_action = UserPostAction(user_id=user_id, post_id=post_id, action='like')
+        db.session.add(new_action)
+        Post.query.get(post_id).likes += 1
+
     db.session.commit()
     return redirect(url_for('newsfeed'))
+
 
 # logic to dislike a news post
 @app.route('/dislike/<int:post_id>')
 def dislike(post_id):
-    post = Post.query.get_or_404(post_id)
-    post.dislikes += 1
+    user_id = session.get('profile').get('user_id')
+    action = UserPostAction.query.filter_by(user_id=user_id, post_id=post_id).first()
+
+    if action:
+        if action.action == 'dislike':
+            # User already liked, so undo the like
+            db.session.delete(action)
+            Post.query.get(post_id).dislikes -= 1
+        else:
+            # User had disliked, now likes
+            action.action = 'dislike'
+            Post.query.get(post_id).dislikes += 1
+            Post.query.get(post_id).likes -= 1
+    else:
+        # New like
+        new_action = UserPostAction(user_id=user_id, post_id=post_id, action='dislike')
+        db.session.add(new_action)
+        Post.query.get(post_id).dislikes += 1
+
     db.session.commit()
     return redirect(url_for('newsfeed'))
+
+@app.route('/post_comment', methods=['POST'])
+def post_comment():
+    if 'profile' not in session:
+        # Redirect to login page or handle unauthorized access
+        return redirect(url_for('login'))
+
+    user_id = session['profile']['user_id']
+    comment_text = request.form['comment']
+
+    if comment_text:
+        # Create a new comment
+        new_comment = Comment(user_id=user_id, text=comment_text)
+        db.session.add(new_comment)
+        db.session.commit()
+
+    return redirect(url_for('newsfeed'))
+
+@app.route('/delete_post/<int:post_id>', methods=['POST'])
+def delete_post(post_id):
+    # Verify if the user is an admin
+    user_id = session.get('profile').get('user_id')
+    user = User.query.filter_by(auth0_id=user_id).first()
+    if not user or not user.is_admin:
+        return "Access Denied", 403
+
+    # Find the post and delete it
+    post_to_delete = Post.query.get_or_404(post_id)
+    db.session.delete(post_to_delete)
+    db.session.commit()
+
+    # Redirect to the admin page
+    return redirect(url_for('admin'))

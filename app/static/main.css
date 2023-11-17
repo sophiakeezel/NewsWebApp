@@ -85,17 +85,75 @@ body {
     border: none;
 }
 
-.btn-dislike {
+  .btn-dislike {
     background-color: #790c04; /* Red color for dislike button */
     color: white;
     border: none;
 }
 
 /* Hover effects for the buttons */
-.btn-like:hover {
+  .btn-like:hover {
     background-color: #5e4a1b; /* Slightly darker green on hover */
 }
 
-.btn-dislike:hover {
+  .btn-dislike:hover {
     background-color: #560600; /* Slightly darker red on hover */
 }
+
+/* Comment Form Styles */
+.comment-form {
+  margin-bottom: 20px;
+}
+
+.comment-form textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+/* Define a custom class for the button */
+.custom-button {
+  background-color: #b9933a; /* Set the desired background color */
+  color: white; /* Set the text color */
+  /* Add any other button styling here */
+}
+
+.comment-form button {
+  width: 100%;
+  padding: 10px;
+  background-color: #790c04;
+  color: #790c04;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.comment-form button:hover {
+  background-color: #790c04;
+}
+
+/* Comments Section Styles */
+.comments-section {
+  height: 300px;
+  overflow-y: scroll;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+  margin-top: 20px;
+  background-color: #f9f9f9;
+}
+
+/* CSS to style the delete button */
+.delete-button {
+  background-color: #790c04; /* Red background */
+  color: rgb(255, 255, 255); /* White text */
+  border: none; /* No border */
+}
+
+/* Optional: Style for hover state */
+.delete-button:hover {
+  background-color: #cc0000; /* Darker red on hover */
+}
+

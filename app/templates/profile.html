@@ -2,14 +2,32 @@
 {% block content %}
 <div class="user-profile">
     <h1>User Profile</h1>
-    <div class="user-profile">
-        {% if 'profile' in session %}
-        <h3>{{ session['profile']['name'] }}</h3>
-        <p>{{ session['profile']['email'] }}</p>
-        <img src="{{ session['profile']['picture'] }}" alt="{{ session['profile']['name'] }}" />
+    <div class="user-info">
+        {% if session.get('profile') %}
+        <h3>{{ session['profile'].get('name') }}</h3>
+        <p>{{ session['profile'].get('email') }}</p>
+        <div class="liked-posts">
+            <h2>Liked Posts</h2>
+            {% for action in liked_posts %}
+            <article class="media content-section">
+                <div class="media-body">
+                  <div class="article-metadata">
+                    <small class="text-muted">{{ action.post.time.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+                  </div>
+                  <h2><a class="article-title" href="#">{{ action.post.title }}</a></h2>
+                  <p class="article-content">{{ action.post.content }}</p>
+                  <span>Likes: {{ action.post.likes }}</span>
+                  <span>Dislikes: {{ action.post.dislikes }}</span>
+                  <a href="{{ url_for('like', post_id=action.post.id) }}" class="btn btn-sm {{ 'btn-primary' if action.post.user_action == 'like' else 'btn-like' }}">Like</a>
+                  <a href="{{ url_for('dislike', post_id=action.post.id) }}" class="btn btn-sm {{ 'btn-primary' if action.post.user_action == 'dislike' else 'btn-dislike' }}">Dislike</a>
+                </div>
+              </article>
+            {% endfor %}
+        </div>        
         {% else %}
         <p>You must be logged in to view this content.</p>
         {% endif %}
     </div>
 </div>
 {% endblock %}
+
