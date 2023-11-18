@@ -14,6 +14,15 @@ def fetch_hackernews_items():
     news_items = []
     for item_id in top_10_ids:
         response = requests.get(BASE_URL + ITEM.format(item_id)).json()
-        news_items.append(response)
+        keywords = extract_keywords(response)  # Function to extract keywords
+        
+        # Add the response with the keywords
+        news_item = response
+        news_item['keywords'] = keywords  # Add keywords to the news item
+        news_items.append(news_item)  # Add the enriched news item to the list
     
     return news_items
+
+def extract_keywords(response):
+    # Logic to extract keywords from the response
+    return ','.join(response['title'].split())  

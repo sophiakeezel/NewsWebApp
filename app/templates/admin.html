@@ -12,24 +12,30 @@
               </div>
               <h2><a class="article-title" href="#">{{ details.post.title }}</a></h2>
               <p class="article-content">{{ details.post.content }}</p>
-              <span>Likes: {{ details.post.likes }}</span>
-              <span>Dislikes: {{ details.post.dislikes }}</span>
-
-              <!-- User Actions -->
-              <div>User Actions:</div>
-              <ul>
-                  {% for username, action in details.actions %}
-                      <li>{{ username }} - {{ action }}</li>
-                  {% endfor %}
-              </ul>
-
-              <!-- Delete Button -->
-              <form action="{{ url_for('delete_post', post_id=details.post.id) }}" method="POST">
-                  <button type="submit" class="btn btn-danger delete-button">Delete</button>
-              </form>
-            </div>
+              <p>Keywords: {{ details.post.keywords }}</p>
+              <span>Likes: {{ details.post.likes }}<button onclick="showLikesDislikes('{{ post_id }}', 'likes')">View</button></span>
+              <span>Dislikes: {{ details.post.dislikes }} <button onclick="showLikesDislikes('{{ post_id }}', 'dislikes')">View</button></span>
+               <!-- Action Buttons -->
+               <div class="action-buttons">
+                <!-- Edit Button -->
+                <a href="{{ url_for('edit_post', post_id=details.post.id) }}" class="btn btn-secondary">Edit</a>
+                <!-- Delete Button Inside Form -->
+                <form action="{{ url_for('delete_post', post_id=details.post.id) }}" method="POST" style="display: inline-block;">
+                    <button type="submit" class="btn btn-danger delete-button">Delete</button>
+                </form>
+            </div>            
+          </div>
           </article>
         {% endfor %}
+        <script>
+          function showLikesDislikes(postId, action) {
+              // Using traditional string concatenation to ensure compatibility
+              var url = '/post/' + postId + '/' + action;
+              $.get(url, function(data) {
+                  alert('Users' + ': ' + data.join(", "));
+              });
+          }
+        </script>
     </div>
 </div>
 {% endblock %}

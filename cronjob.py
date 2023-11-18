@@ -21,6 +21,7 @@ def store_news_in_db():
             post = Post(
                 title=news_item['title'], 
                 time=news_time, 
+                keywords=news_item.get('keywords', ''),  # Save keywords
                 content=news_item.get('url', ''),
                 by=news_item.get('by', ''),
                 descendants=news_item.get('descendants', 0),

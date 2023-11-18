@@ -5,6 +5,7 @@ from os import environ as env
 from urllib.parse import quote_plus, urlencode
 from dotenv import find_dotenv, load_dotenv
 
+# load environment variables for Auth0
 ENV_FILE = find_dotenv()
 if ENV_FILE:
     load_dotenv(ENV_FILE)
@@ -17,6 +18,7 @@ db = SQLAlchemy(app)
 
 oauth = OAuth(app)
 
+# intilaize Auth0
 oauth.register(
     "auth0",
     client_id=env.get("AUTH0_CLIENT_ID"),

@@ -80,24 +80,24 @@ body {
   }
 
   .btn-like {
-    background-color: #b9933a; /* Green color for like button */
+    background-color: #b9933a; 
     color: white;
     border: none;
 }
 
   .btn-dislike {
-    background-color: #790c04; /* Red color for dislike button */
+    background-color: #790c04; 
     color: white;
     border: none;
 }
 
 /* Hover effects for the buttons */
   .btn-like:hover {
-    background-color: #5e4a1b; /* Slightly darker green on hover */
+    background-color: #5e4a1b; 
 }
 
   .btn-dislike:hover {
-    background-color: #560600; /* Slightly darker red on hover */
+    background-color: #560600; 
 }
 
 /* Comment Form Styles */
@@ -113,11 +113,9 @@ body {
   margin-bottom: 10px;
 }
 
-/* Define a custom class for the button */
 .custom-button {
-  background-color: #b9933a; /* Set the desired background color */
-  color: white; /* Set the text color */
-  /* Add any other button styling here */
+  background-color: #b9933a; 
+  color: white; 
 }
 
 .comment-form button {
@@ -145,15 +143,15 @@ body {
   background-color: #f9f9f9;
 }
 
-/* CSS to style the delete button */
+/* Delete button in admin view */
 .delete-button {
-  background-color: #790c04; /* Red background */
-  color: rgb(255, 255, 255); /* White text */
-  border: none; /* No border */
+  background-color: #790c04; 
+  color: rgb(255, 255, 255); 
+  border: none; 
 }
 
-/* Optional: Style for hover state */
+/* Delete button hover in admin view */
 .delete-button:hover {
-  background-color: #cc0000; /* Darker red on hover */
+  background-color: #cc0000; 
 }
 
