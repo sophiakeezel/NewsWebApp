@@ -64,8 +64,7 @@
           <div class="comments-section" style="height: 300px; overflow-y: scroll;">
             {% for comment in comments %}
                 <div class="comment">
-                    <p><strong>Email: {{ comment[0] }}</strong></p> <!-- Display user's email -->
-                    <p><strong>{{ comment[1] }}:</strong> {{ comment[2] }}</p>
+                  <p class="comment-text"><strong>{{ comment.username }}:</strong> {{ comment.text }}</p>
                 </div>
             {% endfor %}
         </div>

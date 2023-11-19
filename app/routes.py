@@ -87,6 +87,43 @@ def admin():
      
     return render_template('admin.html', news_items=news_items_with_user_actions)
 
+# logic to delete a post in the admin view
+@app.route('/delete_post/<int:post_id>', methods=['POST'])
+def delete_post(post_id):
+    # Verify if the user is an admin
+    user_id = session.get('profile').get('user_id')
+    user = User.query.filter_by(auth0_id=user_id).first()
+    if not user or not user.is_admin:
+        return "Access Denied", 403
+
+    # Find the post and its related actions
+    post_to_delete = Post.query.get_or_404(post_id)
+    actions_to_delete = UserPostAction.query.filter_by(post_id=post_id).all()
+
+    # Delete related actions first
+    for action in actions_to_delete:
+        db.session.delete(action)
+
+    db.session.delete(post_to_delete)
+    db.session.commit()
+
+    # Redirect to the admin page
+    return redirect(url_for('admin'))
+
+# edit news posts for admin view
+@app.route('/edit_post/<int:post_id>', methods=['GET', 'POST'])
+def edit_post(post_id):
+    post = Post.query.get_or_404(post_id)
+
+    if request.method == 'POST':
+        post.title = request.form['title']
+        post.content = request.form['content']
+        post.keywords = request.form.get('keywords', '')  
+        db.session.commit()
+        return redirect(url_for('admin'))
+
+    return render_template('edit_post.html', post=post) # go to edit_post route
+
 #--------------------------- JSON newsfeed route --------------------------
 
 @app.route('/newsfeed', methods=['GET'])  
@@ -126,12 +163,7 @@ def home():
 
 @app.route('/news')
 def newsfeed():
-    comments = (Comment.query
-                .join(User, User.id == Comment.user_id)
-                .add_columns(User.email, User.username, Comment.text, Comment.timestamp)
-                .order_by(Comment.timestamp.desc())
-                .limit(10)
-                .all())
+    all_comments = Comment.query.all()
     user_id = session.get('profile', {}).get('user_id')
     # Fetch news items from the database and sort them by time and likes/dislikes
     news_items = (
@@ -156,22 +188,7 @@ def newsfeed():
         if user and user.is_admin:
             is_admin = True
 
-    return render_template('newsfeed.html', news_items=news_items, comments=comments, is_admin=is_admin)
-
-# edit news posts for admin view
-@app.route('/edit_post/<int:post_id>', methods=['GET', 'POST'])
-def edit_post(post_id):
-    post = Post.query.get_or_404(post_id)
-
-    if request.method == 'POST':
-        post.title = request.form['title']
-        post.content = request.form['content']
-        post.keywords = request.form.get('keywords', '')  
-        db.session.commit()
-        return redirect(url_for('admin'))
-
-    return render_template('edit_post.html', post=post) # go to edit_post route
-
+    return render_template('newsfeed.html', news_items=news_items, comments=all_comments, is_admin=is_admin)
 
 # ----------------------- Post comments/likes/dislikes -------------------
 # logic to like a news post
@@ -242,33 +259,17 @@ def post_comment():
         # Redirect to login page or handle unauthorized access
         return redirect(url_for('login'))
 
-    user_id = session['profile']['user_id']
+    user_id = session.get('profile').get('user_id') # get user information
+    user_name = session.get('profile').get('name') # get user information
     comment_text = request.form['comment']
 
     if comment_text:
         # Create a new comment
-        new_comment = Comment(user_id=user_id, text=comment_text)
+        new_comment = Comment(user_id=user_id, username=user_name, text=comment_text)
         db.session.add(new_comment)
         db.session.commit()
 
     return redirect(url_for('newsfeed'))
-
-# logic to delete a post in the admin view
-@app.route('/delete_post/<int:post_id>', methods=['POST'])
-def delete_post(post_id):
-    # Verify if the user is an admin
-    user_id = session.get('profile').get('user_id')
-    user = User.query.filter_by(auth0_id=user_id).first()
-    if not user or not user.is_admin:
-        return "Access Denied", 403
-
-    # Find the post and delete it
-    post_to_delete = Post.query.get_or_404(post_id)
-    db.session.delete(post_to_delete)
-    db.session.commit()
-
-    # Redirect to the admin page
-    return redirect(url_for('admin'))
 
 #--------------------- Profile page ---------------------------
 @app.route('/profile')
