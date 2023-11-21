@@ -1,4 +1,4 @@
-# app/hn_integration.py
+# hn_integration.py
 import requests
 
 def fetch_hackernews_items():
@@ -8,7 +8,7 @@ def fetch_hackernews_items():
     
     top_stories_ids = requests.get(BASE_URL + TOP_STORIES).json()
     
-    # Limit to the top 10 or another reasonable number
+    # Limit to the top 10 
     top_10_ids = top_stories_ids[:10]
     
     news_items = []

@@ -1,8 +1,8 @@
 # cronjob.py
-from app.hn_integration import fetch_hackernews_items
-from app.models import Post
-from app.models import User
-from app import db
+from flasknews.hn_integration import fetch_hackernews_items
+from flasknews import create_app, db
+from flasknews.models import Post, User
+from flasknews import db
 from datetime import datetime
 
 def store_news_in_db():
@@ -35,5 +35,7 @@ def store_news_in_db():
     db.session.commit()
 
 if __name__ == "__main__":
-    store_news_in_db()
+    app = create_app('default') 
+    with app.app_context():
+        store_news_in_db()
 

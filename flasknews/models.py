@@ -1,5 +1,5 @@
 from datetime import datetime
-from app import db
+from flasknews import db
 
 # database model for Loggged in Users
 class User(db.Model):

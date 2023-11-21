@@ -21,9 +21,9 @@
         <p class="article-content">{{ action.post.content }}</p>
         <span>Likes: {{ action.post.likes }}</span>
         <span>Dislikes: {{ action.post.dislikes }}</span>
-        <a href="{{ url_for('like', post_id=action.post.id) }}"
+        <a href="{{ url_for('routes.like', post_id=action.post.id) }}"
           class="btn btn-sm {{ 'btn-primary' if action.post.user_action == 'like' else 'btn-like' }}">Like</a>
-        <a href="{{ url_for('dislike', post_id=action.post.id) }}"
+        <a href="{{ url_for('routes.dislike', post_id=action.post.id) }}"
           class="btn btn-sm {{ 'btn-primary' if action.post.user_action == 'dislike' else 'btn-dislike' }}">Dislike</a>
       </div>
     </article>

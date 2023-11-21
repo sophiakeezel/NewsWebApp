@@ -1,10 +1,12 @@
-from flask import render_template, url_for, session, redirect, request
-from app import app, db, oauth, env
-from app.models import User, Post, UserPostAction, Comment
+from flask import Blueprint, render_template, url_for, session, redirect, request
+from flasknews import db, oauth, env
+from flasknews.models import User, Post, UserPostAction, Comment
 from urllib.parse import urlencode, quote_plus
 from flask import jsonify
 
- # functon for displayinf admin tab when user is an admin
+routes = Blueprint('routes', __name__)
+
+# functon for displaying admin tab when user is an admin
 def is_administator():
     is_admin = False
     user_id = session.get('profile', {}).get('user_id')
@@ -21,7 +23,7 @@ def all_comments():
 
 # ----------------------- Auth0 integration --------------------
 # Route for the auth0 callback page
-@app.route("/callback", methods=["GET", "POST"])
+@routes.route("/callback", methods=["GET", "POST"])
 def callback():
     try:
         # Exchange the authorization code for an access token
@@ -62,14 +64,14 @@ def callback():
         return redirect('/news')
 
 # Route for the Login page
-@app.route('/login', methods=['GET', 'POST'])
+@routes.route('/login', methods=['GET', 'POST'])
 def login():
     return oauth.auth0.authorize_redirect(
-        redirect_uri=url_for("callback", _external=True)
+        redirect_uri=url_for("routes.callback", _external=True)
     )
 
 # logout route for auth0
-@app.route("/logout")
+@routes.route("/logout")
 def logout():
     session.clear()
     return redirect(
@@ -77,7 +79,7 @@ def logout():
         + "/v2/logout?"
         + urlencode(
             {
-                "returnTo": url_for("home", _external=True),
+                "returnTo": url_for("routes.home", _external=True),
                 "client_id": env.get("AUTH0_CLIENT_ID"),
             },
             quote_via=quote_plus,
@@ -86,7 +88,7 @@ def logout():
 
 #------------------- Admin view --------------------------------
 
-@app.route('/admin')
+@routes.route('/admin')
 def admin():
     user_id = session.get('profile').get('user_id')
     user = User.query.filter_by(auth0_id=user_id).first()
@@ -108,7 +110,7 @@ def admin():
     return render_template('admin.html', news_items=news_items_with_user_actions, is_admin=is_administator(), comments=all_comments())
 
 # logic to delete a post in the admin view
-@app.route('/delete_post/<int:post_id>', methods=['POST'])
+@routes.route('/delete_post/<int:post_id>', methods=['POST'])
 def delete_post(post_id):
     # Verify if the user is an admin
     user_id = session.get('profile').get('user_id')
@@ -128,10 +130,10 @@ def delete_post(post_id):
     db.session.commit()
 
     # Redirect to the admin page
-    return redirect(url_for('admin'))
+    return redirect(url_for('routes.admin'))
 
 # edit news posts for admin view
-@app.route('/edit_post/<int:post_id>', methods=['GET', 'POST'])
+@routes.route('/edit_post/<int:post_id>', methods=['GET', 'POST'])
 def edit_post(post_id):
     post = Post.query.get_or_404(post_id)
 
@@ -140,13 +142,13 @@ def edit_post(post_id):
         post.content = request.form['content']
         post.keywords = request.form.get('keywords', '')  
         db.session.commit()
-        return redirect(url_for('admin'))
+        return redirect(url_for('routes.admin'))
 
     return render_template('edit_post.html', post=post) # go to edit_post route
 
 #--------------------------- JSON newsfeed route --------------------------
 
-@app.route('/newsfeed', methods=['GET'])  
+@routes.route('/newsfeed', methods=['GET'])  
 def api_newsfeed():
     # Fetch news items from the database and sort them by time and likes/dislikes
     news_items = Post.query.order_by(Post.time.desc(), Post.likes.desc(), Post.dislikes).limit(10).all()
@@ -171,17 +173,17 @@ def api_newsfeed():
 
 #--------------------- Home page----------------------------
 
-@app.route("/")
+@routes.route("/")
 def home():
     if 'profile' not in session:
         # If the user is not logged in, redirect them to the login page
-        return redirect(url_for('login'))
-    return redirect(url_for('newsfeed'))  # Redirect to the 'newsfeed' route
+        return redirect(url_for('routes.login'))
+    return redirect(url_for('routes.newsfeed'))  # Redirect to the 'newsfeed' route
 
 
 # -------------------- News page and functionality --------------------------
 
-@app.route('/news')
+@routes.route('/news')
 def newsfeed():
     page = request.args.get('page', 1, type=int)
     news_items_pagination = Post.query.order_by(Post.time.desc(), Post.likes.desc(), Post.dislikes).paginate(page=page, per_page=10, error_out=False)
@@ -208,7 +210,7 @@ def newsfeed():
 
 # ----------------------- likes/dislikes -------------------
 # logic to like a news post
-@app.route('/like/<int:post_id>')
+@routes.route('/like/<int:post_id>')
 def like(post_id):
     user_id = session.get('profile').get('user_id')
     user_name = session.get('profile').get('name')
@@ -231,11 +233,11 @@ def like(post_id):
         Post.query.get(post_id).likes += 1
 
     db.session.commit()
-    return redirect(url_for('newsfeed'))
+    return redirect(url_for('routes.newsfeed'))
 
 
 # logic to dislike a news post
-@app.route('/dislike/<int:post_id>')
+@routes.route('/dislike/<int:post_id>')
 def dislike(post_id):
     user_id = session.get('profile').get('user_id')
     user_name = session.get('profile').get('name')
@@ -258,15 +260,15 @@ def dislike(post_id):
         Post.query.get(post_id).dislikes += 1
 
     db.session.commit()
-    return redirect(url_for('newsfeed'))
+    return redirect(url_for('routes.newsfeed'))
 
 #------------------- pages for admin to view user likes/dislikes -------------------------
-@app.route('/post/<int:post_id>/likes_details')
+@routes.route('/post/<int:post_id>/likes_details')
 def post_likes_details(post_id):
     user_likes = UserPostAction.query.filter_by(post_id=post_id, action='like').all()
     return render_template('likes_details.html', users=user_likes, post_id=post_id, is_admin=is_administator(), comments=all_comments())
 
-@app.route('/post/<int:post_id>/dislikes_details')
+@routes.route('/post/<int:post_id>/dislikes_details')
 def post_dislikes_details(post_id):
     user_dislikes = UserPostAction.query.filter_by(post_id=post_id, action='dislike').all()
     return render_template('dislikes_details.html', users=user_dislikes, post_id=post_id, is_admin=is_administator(), comments=all_comments())
@@ -274,7 +276,7 @@ def post_dislikes_details(post_id):
 
 #---------------------- comments ----------------------------------------
 # logic to post comments in the comment section of the news page
-@app.route('/post_comment', methods=['POST'])
+@routes.route('/post_comment', methods=['POST'])
 def post_comment():
     if 'profile' not in session:
         # Redirect to login page or handle unauthorized access
@@ -290,10 +292,10 @@ def post_comment():
         db.session.add(new_comment)
         db.session.commit()
 
-    return redirect(url_for('newsfeed'))
+    return redirect(url_for('routes.newsfeed'))
 
 #--------------------- Profile page ---------------------------
-@app.route('/profile')
+@routes.route('/profile')
 def profile():
     user_id = session.get('profile').get('user_id') # get user information
     user_info = session.get('profile', None)

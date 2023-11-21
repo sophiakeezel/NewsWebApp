@@ -1,5 +1,5 @@
-from app import db
-from app.models import User
+from flasknews import db, create_app
+from flasknews.models import User
 
 def make_admin(email):
     user = User.query.filter_by(email=email).first()
@@ -11,5 +11,7 @@ def make_admin(email):
         print(f"User with email {email} not found.")
 
 if __name__ == "__main__":
+    app = create_app('default') 
     email = input("Enter your email to become admin: ") # email from user input becomes admin email
-    make_admin(email)
+    with app.app_context():
+        make_admin(email)
