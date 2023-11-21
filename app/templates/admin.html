@@ -13,8 +13,12 @@
               <h2><a class="article-title" href="#">{{ details.post.title }}</a></h2>
               <p class="article-content">{{ details.post.content }}</p>
               <p>Keywords: {{ details.post.keywords }}</p>
-              <span>Likes: {{ details.post.likes }}<button onclick="showLikesDislikes('{{ post_id }}', 'likes')">View</button></span>
-              <span>Dislikes: {{ details.post.dislikes }} <button onclick="showLikesDislikes('{{ post_id }}', 'dislikes')">View</button></span>
+              <span>Likes: {{ details.post.likes }}
+                <a href="{{ url_for('post_likes_details', post_id=details.post.id) }}">View</a>
+            </span>
+            <span>Dislikes: {{ details.post.dislikes }}
+                <a href="{{ url_for('post_dislikes_details', post_id=details.post.id) }}">View</a>
+            </span>
                <!-- Action Buttons -->
                <div class="action-buttons">
                 <!-- Edit Button -->
@@ -27,15 +31,6 @@
           </div>
           </article>
         {% endfor %}
-        <script>
-          function showLikesDislikes(postId, action) {
-              // Using traditional string concatenation to ensure compatibility
-              var url = '/post/' + postId + '/' + action;
-              $.get(url, function(data) {
-                alert('Users:' + data.join(", "));
-              });
-          }
-        </script>
     </div>
 </div>
 {% endblock %}

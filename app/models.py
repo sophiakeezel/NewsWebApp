@@ -35,6 +35,7 @@ class Post(db.Model):
 class UserPostAction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_name = db.Column(db.Integer, db.ForeignKey('user.username'), nullable=False)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
     post = db.relationship('Post', backref='post_actions')  
     action = db.Column(db.String(10), nullable=False)  # 'like' or 'dislike'

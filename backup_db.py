@@ -5,7 +5,7 @@ import datetime
 def backup_database():
     current_time = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     backup_file = f"backup-{current_time}.db"
-    shutil.copyfile('site.db', backup_file)  
+    shutil.copyfile('instance/site.db', backup_file)  
     
 if __name__ == "__main__":
     backup_database()

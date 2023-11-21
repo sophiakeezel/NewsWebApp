@@ -1,103 +1,108 @@
 body {
-    background: #fafafa;
-    color: #333333;
-    margin-top: 5rem;
-  }
-  
-  h1, h2, h3, h4, h5, h6 {
-    color: #444444;
-  }
-  
-  .bg-steel {
-    background-color: #671f34;
-  }
-  
-  .site-header .navbar-nav .nav-link {
-    color: #cbd5db;
-  }
-  
-  .site-header .navbar-nav .nav-link:hover {
-    color: #ffffff;
-  }
-  
-  .site-header .navbar-nav .nav-link.active {
-    font-weight: 500;
-  }
-  
-  .content-section {
-    background: #ffffff;
-    padding: 10px 20px;
-    border: 1px solid #dddddd;
-    border-radius: 3px;
-    margin-bottom: 20px;
-  }
-  
-  .article-title {
-    color: #444444;
-  }
-  
-  a.article-title:hover {
-    color: #428bca;
-    text-decoration: none;
-  }
-  
-  .article-content {
-    white-space: pre-line;
-  }
-  
-  .article-img {
-    height: 65px;
-    width: 65px;
-    margin-right: 16px;
-  }
-  
-  .article-metadata {
-    padding-bottom: 1px;
-    margin-bottom: 4px;
-    border-bottom: 1px solid #e3e3e3
-  }
-  
-  .article-metadata a:hover {
-    color: #333;
-    text-decoration: none;
-  }
-  
-  .article-svg {
-    width: 25px;
-    height: 25px;
-    vertical-align: middle;
-  }
-  
-  .account-img {
-    height: 125px;
-    width: 125px;
-    margin-right: 20px;
-    margin-bottom: 16px;
-  }
-  
-  .account-heading {
-    font-size: 2.5rem;
-  }
-
-  .btn-like {
-    background-color: #b9933a; 
-    color: white;
-    border: none;
+  background: #fafafa;
+  color: #333333;
+  margin-top: 5rem;
 }
 
-  .btn-dislike {
-    background-color: #790c04; 
-    color: white;
-    border: none;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #444444;
+}
+
+.bg-steel {
+  background-color: #671f34;
+}
+
+.site-header .navbar-nav .nav-link {
+  color: #cbd5db;
+}
+
+.site-header .navbar-nav .nav-link:hover {
+  color: #ffffff;
+}
+
+.site-header .navbar-nav .nav-link.active {
+  font-weight: 500;
+}
+
+.content-section {
+  background: #ffffff;
+  padding: 10px 20px;
+  border: 1px solid #dddddd;
+  border-radius: 3px;
+  margin-bottom: 20px;
+}
+
+.article-title {
+  color: #444444;
+}
+
+a.article-title:hover {
+  color: #428bca;
+  text-decoration: none;
+}
+
+.article-content {
+  white-space: pre-line;
+}
+
+.article-img {
+  height: 65px;
+  width: 65px;
+  margin-right: 16px;
+}
+
+.article-metadata {
+  padding-bottom: 1px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid #e3e3e3
+}
+
+.article-metadata a:hover {
+  color: #333;
+  text-decoration: none;
+}
+
+.article-svg {
+  width: 25px;
+  height: 25px;
+  vertical-align: middle;
+}
+
+.account-img {
+  height: 125px;
+  width: 125px;
+  margin-right: 20px;
+  margin-bottom: 16px;
+}
+
+.account-heading {
+  font-size: 2.5rem;
+}
+
+.btn-like {
+  background-color: #b9933a;
+  color: white;
+  border: none;
+}
+
+.btn-dislike {
+  background-color: #790c04;
+  color: white;
+  border: none;
 }
 
 /* Hover effects for the buttons */
-  .btn-like:hover {
-    background-color: #5e4a1b; 
+.btn-like:hover {
+  background-color: #5e4a1b;
 }
 
-  .btn-dislike:hover {
-    background-color: #560600; 
+.btn-dislike:hover {
+  background-color: #560600;
 }
 
 /* Comment Form Styles */
@@ -114,8 +119,8 @@ body {
 }
 
 .custom-button {
-  background-color: #b9933a; 
-  color: white; 
+  background-color: #b9933a;
+  color: white;
 }
 
 .comment-form button {
@@ -145,13 +150,64 @@ body {
 
 /* Delete button in admin view */
 .delete-button {
-  background-color: #790c04; 
-  color: rgb(255, 255, 255); 
-  border: none; 
+  background-color: #790c04;
+  color: rgb(255, 255, 255);
+  border: none;
 }
 
 /* Delete button hover in admin view */
 .delete-button:hover {
-  background-color: #cc0000; 
+  background-color: #cc0000;
 }
 
+/* General pagination background */
+.pagination {
+  background-color: #f8f9fa;
+}
+
+/* Pagination item (both normal and active states) */
+.pagination .page-item .page-link {
+  color: #790c04;
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+}
+
+/* Pagination item on hover */
+.pagination .page-item .page-link:hover {
+  color: #790c04;
+  background-color: #e9ecef;
+  border-color: #dee2e6;
+}
+
+/* Pagination item active state */
+.pagination .page-item.active .page-link {
+  color: #ffffff;
+  background-color: #790c04;
+  border-color: #790c04;
+}
+
+/* Pagination item disabled state */
+.pagination .page-item.disabled .page-link {
+  color: #6c757d;
+  background-color: #ffffff;
+  border-color: #dee2e6;
+}
+
+/* User profile information */
+.user-info .profile-box {
+  border: 1px solid #b9933a;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  background-color: white;
+}
+
+.user-info .profile-box h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.user-info .profile-box p {
+  color: #666;
+  margin-bottom: 0;
+}
