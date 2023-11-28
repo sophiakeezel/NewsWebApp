@@ -2,7 +2,11 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from authlib.integrations.flask_client import OAuth
 from os import environ as env
+import json
 
+with open('/etc/config.json') as config_file:
+	config = json.load(config_file)
+     
 # Initialize the database and OAuth
 db = SQLAlchemy()
 oauth = OAuth()
@@ -17,17 +21,19 @@ def create_app(config_name='default'):
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
         app.config['SECRET_KEY'] = 'test-secret-key'
     else:
-        app.secret_key = env.get("APP_SECRET_KEY")
+        app.secret_key = config["APP_SECRET_KEY"]
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'  
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+        
+        print("AUTH0_CLIENT_ID from config:", config["AUTH0_CLIENT_ID"])  
 
         # Initialize Auth0
         oauth.register(
             "auth0",
-            client_id=env.get("AUTH0_CLIENT_ID"),
-            client_secret=env.get("AUTH0_CLIENT_SECRET"),
+            client_id=config["AUTH0_CLIENT_ID"],
+            client_secret=config["AUTH0_CLIENT_SECRET"],
             client_kwargs={"scope": "openid profile email"},
-            server_metadata_url=f'https://{env.get("AUTH0_DOMAIN")}/.well-known/openid-configuration',
+            server_metadata_url=f'https://{config["AUTH0_DOMAIN"]}/.well-known/openid-configuration',
         )
 
     # Initialize extensions

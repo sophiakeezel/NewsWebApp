@@ -48,11 +48,30 @@ A Python Flask Web Application that displays news from the Hacker News API to lo
 7) create a virtual environment in project directory using "python3 -m venv COP4521_SDK20/venv"
 8) activate venv using "source venv/bin/activate"
 9) once venv is active, install dependencies using "pip install -r requirements.txt"
+10) install nginx using "sudo apt install nginx"
+11) install gunicorn using "pip install gunicorn"
+12) remove default nginx file using "sudo rm /etc/nginx/sites-enabled/default"
+13) create /etc/nginx/sites-enabled/flasknews (see configs)
+14) navigate to the project directory and run gunicorn using "gunicorn -w run:app"
 
 List down all the steps from setting up a server to hosting your application with Nginx and Gunicorn with all necessary libraries. Include a requirements.txt for setting up the environment easily.
 
 ## Configs
 All the necessary configuration files (Nginx, supervisor, Gunicorn, Cron etc) you need to setup your server and web application. Please exclude any kind of personal information. 
+
+/etc/config.json:
+
+{
+	"AUTH0_CLIENT_ID": "jzFKgHAGyjzea0bmpoBUWqu2HgVnW10V",
+	"AUTH0_CLIENT_SECRET": "aiyINMNWM8oAos-FocLVNOyvsZlBo3m-X7cKoPvKdGn2sCFrl5ZI5orcxvpr8bNF",
+	"AUTH0_DOMAIN": "dev-grqcme8r814vybhp.us.auth0.com",
+	"APP_SECRET_KEY": "1f243e9a063e172459ddea6b6d3a5ea70deb42f93098c54e1f9efd862bec01b4"
+}
+
+/etc/nginx/sites-enabled/flasknews:
+
+
+
 
 ## Testing
 
