@@ -37,16 +37,17 @@ A Python Flask Web Application that displays news from the Hacker News API to lo
 
 1) Activate server using Linode
     - got to https://linode.com
-    - create an account using Ubuntu 22.04 LTS
+    - create an account and creare a Linode using Ubuntu 22.04 LTS
     - ssh into server using root@<ip_address>
     - add user using adduser <username>
     - add user to sudo group using adduser <username> sudo
-
-2) Enable no Password Authentication
-3) ssh into server, clone GitLab URL in home directory
-4) install venv
-5) nginx
-6) gunicorn
+    - ssh into user@<ip_address>
+3) clone GitLab URL "https://gitlab.com/sophiakeezel1/COP4521_SDK20.git" in home directory
+5) install pip using "sudo apt install python3-pip"
+6) install venv using "sudo apt install python3-venv"
+7) create a virtual environment in project directory using "python3 -m venv COP4521_SDK20/venv"
+8) activate venv using "source venv/bin/activate"
+9) once venv is active, install dependencies using "pip install -r requirements.txt"
 
 List down all the steps from setting up a server to hosting your application with Nginx and Gunicorn with all necessary libraries. Include a requirements.txt for setting up the environment easily.
 
