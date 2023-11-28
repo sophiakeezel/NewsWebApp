@@ -2,54 +2,57 @@
 
 # Flask News Application in Python
 
-## Application Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+## Description
 
-## Program Structure
+A Python Flask Web Application that displays news from the Hacker News API to logged in Users. Allowing interactions such as Likes, Dislikes, comments, and admin access to a designated user. 
 
-COP4521_SDK20
-.
-├── cronjob.py: script to update hacker news items that runs every hour 
-├── make_admin.py: make a user an admin by username
-├── run.py: run flask application
-├── requirements.txt: libraries used to run application
-├── venv: virtual environment folder
-    ├── bin
-    ├── include
-    ├── lib
-    ├── pyvenv.cfg
-├── app
-    ├── __init__.py
-    ├── __pycache__
-    │   ├── __init__.cpython-311.pyc
-    │   ├── hn_integration.cpython-311.pyc
-    │   ├── models.cpython-311.pyc
-    │   └── routes.cpython-311.pyc
-    ├── hn_integration.py
-    ├── models.py
-    ├── routes.py
-    ├── static
-    │   └── main.css
-    └── templates
-        ├── admin.html
-        ├── layout.html
-        ├── newsfeed.html
-        └── profile.html
+## Table of Contents
 
-## Code Execution
+- [Features]
+- [Installation]
+- [Configs](#configs)
+- [Testing]
 
-1) activate virtual environment in the terminal using the command "source /venv/bin/activate"
-2) run the cronjob.py script using "python3 cronjob.py"
-3) run the flask application with "python3 run.py"
-4) to make a user an admin run make_admin.py using "python3 make_admin.py" and enter users email when prompted. Maker sure to complete this step after already logging in. 
+## Features
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+- Log In/Sign Up/Log Out
+    - Auth0 user authentication displayed when app is first run
+    - Log Out tab is displayed when a user is logged in
+- Profile Page
+    - Page displays user profile including name and email
+    - Page displays users liked news posts
+- Home Page
+    - newsfeed.html and layout.html
+    - displays news from Hacker News API
+    - Like/Dislike buttons
+    - Comment section for users to make/view commments
+- Admin View
+    - run "python3 make_admin.py" and enter the user email
+    - admin tab will pop up on the right side when user is logged in as an admin
+    - allows user to view liked/disliked news posts
+    - allows user to edit and delete news post
+    - allows user to view which user have liked/disliked posts
 
-## Author and acknowledgment
+## Installation
 
-Sophia Keezel - sophkeezel@gmail.com
+1) Activate server using Linode
+    - got to https://linode.com
+    - create an account using Ubuntu 22.04 LTS
+    - ssh into server using root@<ip_address>
+    - add user using adduser <username>
+    - add user to sudo group using adduser <username> sudo
 
-## License
-For open source projects, say how it is licensed.
+2) Enable no Password Authentication
+3) ssh into server, clone GitLab URL in home directory
+4) install venv
+5) nginx
+6) gunicorn
 
+List down all the steps from setting up a server to hosting your application with Nginx and Gunicorn with all necessary libraries. Include a requirements.txt for setting up the environment easily.
+
+## Configs
+All the necessary configuration files (Nginx, supervisor, Gunicorn, Cron etc) you need to setup your server and web application. Please exclude any kind of personal information. 
+
+## Testing
+
+To run tests, first activate virtual environment using "source venv/bin/activate" then run "python -m unittest discover" to run tests on test_cronjob.py, test_models.py, test_routes.py
