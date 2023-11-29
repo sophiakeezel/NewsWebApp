@@ -4,14 +4,14 @@
 
 ## Description
 
-A Python Flask Web Application that displays news from the Hacker News API to logged in Users. Allowing interactions such as Likes, Dislikes, comments, and admin access to a designated user. 
+A Python Flask Web Application that displays news from the Hacker News API to logged in Users. Allowing news post interactions such as likes, dislikes, comments, and admin access to a designated user. Users must be authenticated with the Auth0 authenticatiopn platform, and able to log out using the same platform.  
 
 ## Table of Contents
 
-- [Features]
-- [Installation]
+- [Features](#features)
+- [Installation](#installation)
 - [Configs](#configs)
-- [Testing]
+- [Testing](#testing)
 
 ## Features
 
@@ -37,7 +37,7 @@ A Python Flask Web Application that displays news from the Hacker News API to lo
 
 1) Activate server using Linode
     - got to https://linode.com
-    - create an account and creare a Linode using Ubuntu 22.04 LTS
+    - create an account and a Linode using Ubuntu 22.04 LTS
     - ssh into server using root@<ip_address>
     - add user using adduser <username>
     - add user to sudo group using adduser <username> sudo
@@ -52,12 +52,14 @@ A Python Flask Web Application that displays news from the Hacker News API to lo
 11) install gunicorn using "pip install gunicorn"
 12) remove default nginx file using "sudo rm /etc/nginx/sites-enabled/default"
 13) create /etc/nginx/sites-enabled/flasknews (see configs)
-14) navigate to the project directory and run gunicorn using "gunicorn -w run:app"
-
-List down all the steps from setting up a server to hosting your application with Nginx and Gunicorn with all necessary libraries. Include a requirements.txt for setting up the environment easily.
+14) navigate to the project directory and run gunicorn using "gunicorn -w run:app" to test
+15) install aupervisor with "sudo apt install supervisor"
+16) create /etc/supervisor/conf.d/flasknews.conf (see configs)
+17) make directory flasknews "sudo mkdir -p /var/log/flasknews"
+18) make supervisor files using "sudo touch /var/log/flasknews/flasknews.err.log" and "sudo touch /var/log/flasknews/flasknews.out.log"
+19) restart supervisor using "sudo supervisorctl reload"
 
 ## Configs
-All the necessary configuration files (Nginx, supervisor, Gunicorn, Cron etc) you need to setup your server and web application. Please exclude any kind of personal information. 
 
 /etc/config.json:
 
@@ -70,8 +72,35 @@ All the necessary configuration files (Nginx, supervisor, Gunicorn, Cron etc) yo
 
 /etc/nginx/sites-enabled/flasknews:
 
+server {
+	listen 80;
+	server_name 45.79.169.7;
+	
+	location /static {
+		alias /home/skeezel/COP4521_SDK20/flasknews/static;
+	}
 
+	location / {
+		proxy_pass http://localhost:8000;
+		include /etc/nginx/proxy_params;
+		proxy_redirect off;
+	}
+}
 
+activate cronjob on cronjob.py:
+
+/etc/supervisor/conf.d/flasknews.conf:
+
+[program:flasknews]
+directory=/home/skeezel/COP4521_SDK20
+command=/home/skeezel/COP4521_SDK20/venv/bin/gunicorn -w 3 run:app
+user=skeezel
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+stderr_logfile=/var/log/flasknews/flasknews.err.log
+stdout_logfile=/var/log/flasknews/flasknews.out.log
 
 ## Testing
 
