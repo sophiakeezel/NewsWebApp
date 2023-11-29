@@ -3,8 +3,12 @@ from flasknews import db, oauth, env
 from flasknews.models import User, Post, UserPostAction, Comment
 from urllib.parse import urlencode, quote_plus
 from flask import jsonify
+import json
 
 routes = Blueprint('routes', __name__)
+
+with open('/etc/config.json') as config_file:
+    config = json.load(config_file)
 
 # functon for displaying admin tab when user is an admin
 def is_administator():
@@ -14,7 +18,7 @@ def is_administator():
         user = User.query.filter_by(auth0_id=user_id).first()
         if user and user.is_admin:
             is_admin = True
-    
+
     return is_admin
 
 #function to get user comments
@@ -29,35 +33,35 @@ def callback():
         # Exchange the authorization code for an access token
         token = oauth.auth0.authorize_access_token()
         # Get the user's profile information
-        userinfo_endpoint = f"https://{env.get('AUTH0_DOMAIN')}/userinfo"
+        userinfo_endpoint = f"https://{config['AUTH0_DOMAIN']}/userinfo"
         resp = oauth.auth0.get(userinfo_endpoint)
         userinfo = resp.json()
 
         # Store the user information in flask session
         session["jwt_payload"] = userinfo
         session["profile"] = {
-            "user_id": userinfo["sub"],
-            "name": userinfo["name"],
-            "picture": userinfo["picture"],
-            "email": userinfo.get("email")
-        }
+                "user_id": userinfo["sub"],
+                "name": userinfo["name"],
+                "picture": userinfo["picture"],
+                "email": userinfo.get("email")
+                }
 
         # Get or create user in the database
         user = User.query.filter_by(auth0_id=userinfo["sub"]).first()
         if not user:
             # Create a new user object
             new_user = User(
-                auth0_id=userinfo["sub"],
-                username=userinfo["name"],  
-                email=userinfo["email"]
-            )
+                    auth0_id=userinfo["sub"],
+                    username=userinfo["name"],  
+                    email=userinfo["email"]
+                    )
             db.session.add(new_user)
             try:
                 db.session.commit()
             except Exception as e:
                 print(f"Error adding user to database: {e}")
                 db.session.rollback()
-            
+
         return redirect('/news')
     except Exception as e:
         print(e)
@@ -67,24 +71,24 @@ def callback():
 @routes.route('/login', methods=['GET', 'POST'])
 def login():
     return oauth.auth0.authorize_redirect(
-        redirect_uri=url_for("routes.callback", _external=True)
-    )
+            redirect_uri=url_for("routes.callback", _external=True)
+            )
 
 # logout route for auth0
 @routes.route("/logout")
 def logout():
     session.clear()
     return redirect(
-        "https://" + env.get("AUTH0_DOMAIN")
-        + "/v2/logout?"
-        + urlencode(
-            {
-                "returnTo": url_for("routes.home", _external=True),
-                "client_id": env.get("AUTH0_CLIENT_ID"),
-            },
-            quote_via=quote_plus,
-        )
-    )
+            "https://" + config["AUTH0_DOMAIN"]
+            + "/v2/logout?"
+            + urlencode(
+                {
+                    "returnTo": url_for("routes.home", _external=True),
+                    "client_id": config["AUTH0_CLIENT_ID"],
+                    },
+                quote_via=quote_plus,
+                )
+            )
 
 #------------------- Admin view --------------------------------
 
@@ -94,7 +98,7 @@ def admin():
     user = User.query.filter_by(auth0_id=user_id).first()
     if not user or not user.is_admin:  
         return "Access Denied", 403
-    
+
     # Fetch all news items that have been liked or disliked
     news_items = Post.query.join(UserPostAction, Post.id == UserPostAction.post_id).group_by(Post.id).all()
 
@@ -103,10 +107,10 @@ def admin():
     for item in news_items:
         actions = db.session.query(User.username, UserPostAction.action).join(UserPostAction, User.id == UserPostAction.user_id).filter(UserPostAction.post_id == item.id).all()
         news_items_with_user_actions[item.id] = {
-            'post': item,
-            'actions': actions
-        }
-     
+                'post': item,
+                'actions': actions
+                }
+
     return render_template('admin.html', news_items=news_items_with_user_actions, is_admin=is_administator(), comments=all_comments())
 
 # logic to delete a post in the admin view
@@ -152,23 +156,23 @@ def edit_post(post_id):
 def api_newsfeed():
     # Fetch news items from the database and sort them by time and likes/dislikes
     news_items = Post.query.order_by(Post.time.desc(), Post.likes.desc(), Post.dislikes).limit(10).all()
-    
+
     # Convert the news items to a JSON response
     data = {
-        "news_items": [{
-            'by': item.by,
-            'descendants': item.descendants,
-            'id': item.id,
-            'kids': list(map(int, item.kids.split(','))) if item.kids else [],
-            'score': item.score,
-            'text': item.content,
-            'time': int(item.time.timestamp()),
-            'title': item.title,
-            'type': item.type,
-            'url': item.url
-        } for item in news_items]
-    }
-    
+            "news_items": [{
+                'by': item.by,
+                'descendants': item.descendants,
+                'id': item.id,
+                'kids': list(map(int, item.kids.split(','))) if item.kids else [],
+                'score': item.score,
+                'text': item.content,
+                'time': int(item.time.timestamp()),
+                'title': item.title,
+                'type': item.type,
+                'url': item.url
+                } for item in news_items]
+            }
+
     return jsonify(data)
 
 #--------------------- Home page----------------------------
@@ -192,10 +196,10 @@ def newsfeed():
     user_id = session.get('profile', {}).get('user_id')
     # Fetch news items from the database and sort them by time and likes/dislikes
     news_items = (
-        Post.query.order_by(Post.time.desc(), Post.likes.desc(), Post.dislikes)
-        .paginate(page=1, per_page=10, error_out=False)
-        .items
-    )
+            Post.query.order_by(Post.time.desc(), Post.likes.desc(), Post.dislikes)
+            .paginate(page=1, per_page=10, error_out=False)
+            .items
+            )
 
     # Fetch user's actions on these posts
     user_actions = UserPostAction.query.filter_by(user_id=user_id).all()

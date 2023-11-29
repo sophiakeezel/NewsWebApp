@@ -24,8 +24,7 @@ def create_app(config_name='default'):
         app.secret_key = config["APP_SECRET_KEY"]
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'  
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-        
-        print("AUTH0_CLIENT_ID from config:", config["AUTH0_CLIENT_ID"])  
+          
 
         # Initialize Auth0
         oauth.register(
