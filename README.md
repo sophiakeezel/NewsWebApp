@@ -63,6 +63,7 @@ A Python Flask Web Application that displays news from the Hacker News API to lo
 ## Configs
 
 /etc/config.json:
+
 {
 	"AUTH0_CLIENT_ID": "jzFKgHAGyjzea0bmpoBUWqu2HgVnW10V",
 	"AUTH0_CLIENT_SECRET": "aiyINMNWM8oAos-FocLVNOyvsZlBo3m-X7cKoPvKdGn2sCFrl5ZI5orcxvpr8bNF",
@@ -71,6 +72,7 @@ A Python Flask Web Application that displays news from the Hacker News API to lo
 }
 
 /etc/nginx/sites-enabled/flasknews:
+
 server {
 	listen 80;
 	server_name 45.79.169.7;
@@ -85,6 +87,7 @@ server {
 }
 
  /tmp/crontab.bf1kKy/crontab:
+ 
 30 4 1 * * sudo certbot renew --quiet
 0 * * * * python3 home/skeezel/COP4521_SDK20/cronjob.py
 
