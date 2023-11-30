@@ -58,6 +58,7 @@ A Python Flask Web Application that displays news from the Hacker News API to lo
 17) make directory flasknews "sudo mkdir -p /var/log/flasknews"
 18) make supervisor files using "sudo touch /var/log/flasknews/flasknews.err.log" and "sudo touch /var/log/flasknews/flasknews.out.log"
 19) restart supervisor using "sudo supervisorctl reload"
+20) activate cronjob for cronjob.py using "crontab -e" (see configs)
 
 ## Configs
 
@@ -87,7 +88,28 @@ server {
 	}
 }
 
-activate cronjob on cronjob.py:
+ /tmp/crontab.bf1kKy/crontab:
+
+# To define the time you can provide concrete values for
+# minute (m), hour (h), day of month (dom), month (mon),
+# and day of week (dow) or use '*' in these fields (for 'any').
+# 
+# Notice that tasks will be started based on the cron's system
+# daemon's notion of time and timezones.
+# 
+# Output of the crontab jobs (including errors) is sent through
+# email to the user the crontab file belongs to (unless redirected).
+# 
+# For example, you can run a backup of all your user accounts
+# at 5 a.m every week with:
+# 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/
+# 
+# For more information see the manual pages of crontab(5) and cron(8)
+# 
+# m h  dom mon dow   command
+30 4 1 * * sudo certbot renew --quiet
+0 * * * * python3 home/skeezel/COP4521_SDK20/cronjob.py
+
 
 /etc/supervisor/conf.d/flasknews.conf:
 
