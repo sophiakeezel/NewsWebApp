@@ -71,6 +71,7 @@ A Python Flask Web Application that displays news from the Hacker News API to lo
 	"AUTH0_DOMAIN": "dev-grqcme8r814vybhp.us.auth0.com",
 	"APP_SECRET_KEY": "1f243e9a063e172459ddea6b6d3a5ea70deb42f93098c54e1f9efd862bec01b4"
 }
+```
 
 /etc/nginx/sites-enabled/flasknews:
 
@@ -87,12 +88,14 @@ server {
 		proxy_redirect off;
 	}
 }
+```
 
 /tmp/crontab.bf1kKy/crontab:
 
 ```bash
 30 4 1 * * sudo certbot renew --quiet
 0 * * * * python3 home/skeezel/COP4521_SDK20/cronjob.py
+```
 
 /etc/supervisor/conf.d/flasknews.conf:
 
@@ -107,6 +110,7 @@ stopasgroup=true
 killasgroup=true
 stderr_logfile=/var/log/flasknews/flasknews.err.log
 stdout_logfile=/var/log/flasknews/flasknews.out.log
+```
 
 ## Testing
 
