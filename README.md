@@ -118,3 +118,11 @@ stdout_logfile=/var/log/flasknews/flasknews.out.log
 ## Testing
 
 To run tests, first activate virtual environment using "source venv/bin/activate" then run "python -m unittest discover" to run tests on test_cronjob.py, test_models.py, test_routes.py
+
+Test Results:
+
+......
+----------------------------------------------------------------------
+Ran 6 tests in 0.106s
+
+OK
