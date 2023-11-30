@@ -7,8 +7,7 @@
 A Python Flask Web Application that displays news from the Hacker News API to logged in Users. Allowing news post interactions such as likes, dislikes, comments, and admin access to a designated user. Users must be authenticated with the Auth0 authenticatiopn platform, and able to log out using the same platform.  
 
 ## Author
-Sophia Keezel
-SDK20
+Sophia Keezel - SDK20
 
 ## Table of Contents
 
