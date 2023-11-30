@@ -64,18 +64,17 @@ A Python Flask Web Application that displays news from the Hacker News API to lo
 
 /etc/config.json:
 
-\`\`\`json
+```json
 {
 	"AUTH0_CLIENT_ID": "jzFKgHAGyjzea0bmpoBUWqu2HgVnW10V",
 	"AUTH0_CLIENT_SECRET": "aiyINMNWM8oAos-FocLVNOyvsZlBo3m-X7cKoPvKdGn2sCFrl5ZI5orcxvpr8bNF",
 	"AUTH0_DOMAIN": "dev-grqcme8r814vybhp.us.auth0.com",
 	"APP_SECRET_KEY": "1f243e9a063e172459ddea6b6d3a5ea70deb42f93098c54e1f9efd862bec01b4"
 }
-\`\`\`
 
 /etc/nginx/sites-enabled/flasknews:
 
-\`\`\`nginx
+```nginx
 server {
 	listen 80;
 	server_name 45.79.169.7;
@@ -88,18 +87,16 @@ server {
 		proxy_redirect off;
 	}
 }
-\`\`\`
 
 /tmp/crontab.bf1kKy/crontab:
 
-\`\`\`bash
+```bash
 30 4 1 * * sudo certbot renew --quiet
 0 * * * * python3 home/skeezel/COP4521_SDK20/cronjob.py
-\`\`\`
 
 /etc/supervisor/conf.d/flasknews.conf:
 
-\`\`\`ini
+```ini
 [program:flasknews]
 directory=/home/skeezel/COP4521_SDK20
 command=/home/skeezel/COP4521_SDK20/venv/bin/gunicorn -w 3 run:app
@@ -110,8 +107,6 @@ stopasgroup=true
 killasgroup=true
 stderr_logfile=/var/log/flasknews/flasknews.err.log
 stdout_logfile=/var/log/flasknews/flasknews.out.log
-\`\`\`
-
 
 ## Testing
 
