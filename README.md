@@ -63,7 +63,6 @@ A Python Flask Web Application that displays news from the Hacker News API to lo
 ## Configs
 
 /etc/config.json:
-
 {
 	"AUTH0_CLIENT_ID": "jzFKgHAGyjzea0bmpoBUWqu2HgVnW10V",
 	"AUTH0_CLIENT_SECRET": "aiyINMNWM8oAos-FocLVNOyvsZlBo3m-X7cKoPvKdGn2sCFrl5ZI5orcxvpr8bNF",
@@ -72,15 +71,12 @@ A Python Flask Web Application that displays news from the Hacker News API to lo
 }
 
 /etc/nginx/sites-enabled/flasknews:
-
 server {
 	listen 80;
 	server_name 45.79.169.7;
-	
 	location /static {
 		alias /home/skeezel/COP4521_SDK20/flasknews/static;
 	}
-
 	location / {
 		proxy_pass http://localhost:8000;
 		include /etc/nginx/proxy_params;
@@ -89,30 +85,10 @@ server {
 }
 
  /tmp/crontab.bf1kKy/crontab:
-
-# To define the time you can provide concrete values for
-# minute (m), hour (h), day of month (dom), month (mon),
-# and day of week (dow) or use '*' in these fields (for 'any').
-# 
-# Notice that tasks will be started based on the cron's system
-# daemon's notion of time and timezones.
-# 
-# Output of the crontab jobs (including errors) is sent through
-# email to the user the crontab file belongs to (unless redirected).
-# 
-# For example, you can run a backup of all your user accounts
-# at 5 a.m every week with:
-# 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/
-# 
-# For more information see the manual pages of crontab(5) and cron(8)
-# 
-# m h  dom mon dow   command
 30 4 1 * * sudo certbot renew --quiet
 0 * * * * python3 home/skeezel/COP4521_SDK20/cronjob.py
 
-
 /etc/supervisor/conf.d/flasknews.conf:
-
 [program:flasknews]
 directory=/home/skeezel/COP4521_SDK20
 command=/home/skeezel/COP4521_SDK20/venv/bin/gunicorn -w 3 run:app
