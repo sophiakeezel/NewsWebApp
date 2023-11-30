@@ -87,11 +87,12 @@ server {
 }
 
  /tmp/crontab.bf1kKy/crontab:
- 
+
 30 4 1 * * sudo certbot renew --quiet
 0 * * * * python3 home/skeezel/COP4521_SDK20/cronjob.py
 
 /etc/supervisor/conf.d/flasknews.conf:
+
 [program:flasknews]
 directory=/home/skeezel/COP4521_SDK20
 command=/home/skeezel/COP4521_SDK20/venv/bin/gunicorn -w 3 run:app
