@@ -97,7 +97,7 @@ server {
 
 ```bash
 30 4 1 * * sudo certbot renew --quiet
-0 * * * * python3 home/skeezel/COP4521_SDK20/cronjob.py
+0 * * * * usr/bin/python3 home/skeezel/COP4521_SDK20/cronjob.py
 ```
 
 /etc/supervisor/conf.d/flasknews.conf:
@@ -120,6 +120,7 @@ stdout_logfile=/var/log/flasknews/flasknews.out.log
 To run tests, first activate virtual environment using "source venv/bin/activate" then run "python -m unittest discover" to run tests on test_cronjob.py, test_models.py, test_routes.py
 
 Test Results:
+
 ......
 ----------------------------------------------------------------------
 Ran 6 tests in 0.106s
