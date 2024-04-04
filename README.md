@@ -13,7 +13,6 @@ Sophia Keezel - SDK20
 
 - [Features](#features)
 - [Installation](#installation)
-- [Configs](#configs)
 - [Testing](#testing)
 
 ## Features
