@@ -63,58 +63,6 @@ Sophia Keezel - SDK20
 19) restart supervisor using "sudo supervisorctl reload"
 20) activate cronjob for cronjob.py using "crontab -e" (see configs)
 
-## Configs
-
-/etc/config.json:
-
-```json
-{
-	"AUTH0_CLIENT_ID": "jzFKgHAGyjzea0bmpoBUWqu2HgVnW10V",
-	"AUTH0_CLIENT_SECRET": "aiyINMNWM8oAos-FocLVNOyvsZlBo3m-X7cKoPvKdGn2sCFrl5ZI5orcxvpr8bNF",
-	"AUTH0_DOMAIN": "dev-grqcme8r814vybhp.us.auth0.com",
-	"APP_SECRET_KEY": "1f243e9a063e172459ddea6b6d3a5ea70deb42f93098c54e1f9efd862bec01b4"
-}
-```
-
-/etc/nginx/sites-enabled/flasknews:
-
-```nginx
-server {
-	listen 80;
-	server_name 45.79.169.7;
-	location /static {
-		alias /home/skeezel/COP4521_SDK20/flasknews/static;
-	}
-	location / {
-		proxy_pass http://localhost:8000;
-		include /etc/nginx/proxy_params;
-		proxy_redirect off;
-	}
-}
-```
-
-/tmp/crontab.bf1kKy/crontab:
-
-```bash
-30 4 1 * * sudo certbot renew --quiet
-0 * * * * usr/bin/python3 home/skeezel/COP4521_SDK20/cronjob.py
-```
-
-/etc/supervisor/conf.d/flasknews.conf:
-
-```ini
-[program:flasknews]
-directory=/home/skeezel/COP4521_SDK20
-command=/home/skeezel/COP4521_SDK20/venv/bin/gunicorn -w 3 run:app
-user=skeezel
-autostart=true
-autorestart=true
-stopasgroup=true
-killasgroup=true
-stderr_logfile=/var/log/flasknews/flasknews.err.log
-stdout_logfile=/var/log/flasknews/flasknews.out.log
-```
-
 ## Testing
 
 To run tests, first activate virtual environment using "source venv/bin/activate" then run "python -m unittest discover" to run tests on test_cronjob.py, test_models.py, test_routes.py
